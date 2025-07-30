@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>COVID-19 Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<h1>COVID-19 Dashboard</h1>
+<label>Country: <input type="text" id="country" placeholder="e.g. Afghanistan" /></label>
+<label>Start Date: <input type="date" id="start" /></label>
+<label>End Date: <input type="date" id="end" /></label>
+<button onclick="loadData()">Load Data</button>
+<canvas id="chart" width="800" height="400"></canvas>
+<script>
+async function loadData() {
+    const country = document.getElementById('country').value;
+    const start = document.getElementById('start').value;
+    const end = document.getElementById('end').value;
+    const params = new URLSearchParams();
+    if (country) params.append('country', country);
+    if (start) params.append('start', start);
+    if (end) params.append('end', end);
+    const res = await fetch(`/api/data?${params.toString()}`);
+    const data = await res.json();
+    const labels = data.map(row => row.date);
+    const cases = data.map(row => row.cases);
+    const ctx = document.getElementById('chart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: { labels: labels, datasets: [{ label: 'Confirmed Cases', data: cases, fill: false, borderColor: 'red' }] },
+        options: { responsive: true }
+    });
+}
+</script>
+</body>
+</html>
