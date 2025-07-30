@@ -12,3 +12,12 @@ def test_api_data():
     data = json.loads(resp.data)
     assert isinstance(data, list)
     assert len(data) > 0
+
+from analysis.pipeline import run_all
+
+def test_analysis_pipeline():
+    results = run_all()
+    assert 'descriptive' in results
+    assert 'bivariate' in results
+    assert 'regression' in results
+    assert 'ml' in results
